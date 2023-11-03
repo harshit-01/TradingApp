@@ -1,0 +1,69 @@
+.holdingsText{
+    font-weight: bold;
+    margin:15px;
+    display:flex;
+    justify-content: flex-start;
+    align-items: center;
+    width:90%;
+    flex-wrap: wrap;
+}
+.Line{
+    border-top:1px solid rgb(192, 190, 190);
+    width:95%;
+}
+.holdings{
+    display:flex;
+    justify-content: flex-start;
+    align-items: center;
+    width:100%;
+    font-size: 1.5em;
+}
+.myPortfolioValue{
+    display:flex;
+    justify-content: flex-start;
+    align-items: center;
+    width:100%;
+    flex-wrap: wrap;
+    box-shadow: 1px 1px 1px 1px grey;
+}
+.myInvestment{
+    width:100%;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+.portfolioVal{
+    width:32%;
+}
+.portfolioData{
+    display:flex;
+    justify-content: flex-start;
+    align-items: center;
+    width:100%;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+.stockAnalysis{
+    margin-top: 15px;
+    display:flex;
+    justify-content: flex-start;
+    align-items: center;
+    width:100%;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+.piechart{
+    display:flex;
+    justify-content: flex-start;
+    align-items: center;
+    width:100%;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+.myStocks{
+    width:45%;
+    height:250px;
+    box-shadow: 1px 1px 1px 1px grey;
+}
+.graphs{
+    width:40%;
+}
