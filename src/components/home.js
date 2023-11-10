@@ -34,11 +34,12 @@ function stringToColor(string) {
 }
 
 function stringAvatar(name) {
+    console.log(name)
   return {
     sx: {
       bgcolor: stringToColor(name),
     },
-    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+    children: `${name[0].toUpperCase()}`,
   };
 }
 
@@ -52,9 +53,12 @@ export default function Home(){
     const [sensexValuePercentageChange,setSensexValuePercentageChange] = useState(0); 
     const [searchStocksChart,setSearchStocksChart] = useState("IBM"); 
     const [stockData, setStockData] = useState({})
+    const [showStockVol, setShowStockVol] = useState(null)
+    const [showStock,setShowStock] = useState(false);
     let navigate = useNavigate();
     let s = "";
     let searchString = "";
+    let username = localStorage.getItem("username");
     const fetchStockData = async (symbol) => {
         console.log(symbol)
         const response = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=${symbol}&apikey=demo`)
@@ -62,10 +66,29 @@ export default function Home(){
         const data = await response.json()
         return data
     }
-    const handleChange = (e)=>{
+    const handleChange = async(e)=>{
         console.log(e.target.value)
         s = s + e.target.value;
         setSearchStocks(s);
+        var flag = false;
+        let url2 = "https://www.alphavantage.co/query?function=TOP_GAINERS_LOSERS&apikey=demo"
+        await axios.get(url2).then(res => {
+        console.log(res.data.top_gainers);
+        let arr = res.data.top_gainers.filter((val)=>{
+            return val.ticker === s;
+        })
+        if(arr?.length > 0){
+            setShowStockVol(arr);
+            setShowStock(true);
+            flag = true;
+        }
+        console.log(arr);
+        })
+        .catch(error => console.log(error))
+        if(flag === false){
+            setShowStockVol(null);
+            setShowStock(false)
+        }
     }
     const handleChartChange = (e)=>{
         console.log(e.target.value)
@@ -116,18 +139,36 @@ export default function Home(){
                 <div className="allStock">
                     <div className="indexPrice">
                         <span className="indexPriceText">
-                            <b>NIFTY50:</b> <span style={{color:"green"}}>{niftyValue}</span><small className="small">{niftyValuePercentageChange}%</small>
-                        </span>
+                            <b>NIFTY50:</b> <br/>
+                            { niftyValue > 19000 ?
+                            <><span style={{color:"green"}}>{niftyValue}</span><small className="small">{niftyValuePercentageChange}%</small></>
+                            : <><span style={{color:"red"}}>{niftyValue}</span><small className="small">{niftyValuePercentageChange}%</small></>
+                            }
+                            </span>
                         <span className="indexPriceText">
-                            <b>SENSEX:</b>  <span style={{color:"green"}}>{sensexValue}</span><small className="small">{sensexValuePercentageChange}%</small>
+                            <b>SENSEX:</b><br/>  
+                            { sensexValue > 59000 ?
+                            <><span style={{color:"green"}}>{sensexValue}</span><small className="small">{sensexValuePercentageChange}%</small></>
+                            :<><span style={{color:"red"}}>{sensexValue}</span><small className="small">{sensexValuePercentageChange}%</small></>
+                            }
                         </span>
                     </div>
                     <hr/>
                     <div className="stockWatchlist">
                         <SearchSharpIcon sx={{padding:"10px"}}/>
-                        <small style ={{paddingTop:"14px",color:"lightgray"}}><input className="searchStocks" placeholder="Search stocks"  value={searchStocks} onChange={handleChange}/></small>
+                        <small style ={{paddingTop:"14px",color:"lightgray"}}><input className="searchStocks" placeholder="Search stock volume traded"  value={searchStocks} onChange={handleChange}/></small>
                     </div>
                     <div className="stockList">
+                        {showStock ? 
+                        <div style={{marginBottom:"10px"}}>
+                            <span style={{paddingRight:"10px"}}>
+                                {showStockVol[0].ticker}:
+                            </span>
+                            <span>
+                                <b style={{color:"blue"}}>{showStockVol[0].volume}</b> (Vol. Traded)
+                            </span>
+                        </div>
+                        : null}
                         {topGainers?.length > 0 ? <strong>Top Gainers</strong> : "Stock info not available"}
                         {topGainers?.slice(0,14)?.map((info,index)=>{
                             return(
@@ -189,7 +230,7 @@ export default function Home(){
                  </div>
                  <div className="avatar">
                     <p><NotificationsNoneIcon fontSize="small" sx={{paddingTop:"5px"}}/></p>
-                    <Avatar {...stringAvatar('Kent Dodds')} onClick={()=> navigate('/profile')} />
+                    <Avatar {...stringAvatar(username)} onClick={()=> navigate('/profile')} />
                  </div>
                  <div className="myInvestment">
                     <p style={{marginLeft:"15px"}}>Hi Trader, Welcome to <b>TradeEasy

@@ -26,16 +26,18 @@ function stringToColor(string) {
   }
   
   function stringAvatar(name) {
+    console.log(name)
     return {
       sx: {
         bgcolor: stringToColor(name),
       },
-      children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+      children: `${name[0].toUpperCase()}`,
     };
   }
 
 export default function Navbar(){
     let navigate = useNavigate();
+    let username = localStorage.getItem("username");
     return(
         <div className="navbar">
                 <img className="appLogoHome" src={appLogo}></img>
@@ -61,7 +63,7 @@ export default function Navbar(){
             </div>
             <div className="avatar">
                 <p><NotificationsNoneIcon fontSize="small" sx={{paddingTop:"5px"}}/></p>
-                <Avatar {...stringAvatar('Kent Dodds')} onClick={()=> navigate('/profile')}/>
+                <Avatar {...stringAvatar(username)} onClick={()=> navigate('/profile')}/>
             </div>
         </div>
     )

@@ -18,7 +18,7 @@ export default function Trade(){
       };
     const handleClick = async function temp(e){
         //let url = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&apikey=7X8K8UF6MZY8OL6J";
-        let url2 = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${buyStocks}&apikey=7X8K8UF6MZY8OL6J`
+        let url2 = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${buyStocks}&apikey=demo`
         await axios.get(url2).then(res => {
         console.log(res?.data["Global Quote"]);
         setStock(res?.data["Global Quote"]);

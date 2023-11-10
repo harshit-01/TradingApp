@@ -3,20 +3,50 @@ import appLogo from "./../images/appLogo.png"
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef,forwardRef } from "react";
+import { useNavigate  } from "react-router-dom";
+import axios from 'axios';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
+const Alert = forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
+
+function ValidateEmail(email) 
+  {
+   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
+    {
+      return (true)
+    }
+      alert("You have entered an invalid email address!")
+      return (false)
+}
+  
 export default function Signup(){
     const [username,setUsername] = useState("");
     const [password,setPassword] = useState("");
     const [usernameError, setUsernameError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
+    const [open, setOpen] = useState(false);
+    const handleClickSnackbar = () => {
+        setOpen(true);
+    };
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+        return;
+        }
+
+        setOpen(false);
+    };
+    let navigate = useNavigate();
     const handleUsernameChange = (e)=> {
         setUsername(e.target.value);
     }
     const handlePasswordChange = (e)=> {
         setPassword(e.target.value);
     }
-    const handleClick = (e) => {
+    const handleClick = async(e) => {
         if(username.length === 0){
             setUsernameError(true);
             if(password.length === 0){
@@ -28,6 +58,10 @@ export default function Signup(){
             return;
         }
         else{
+            // if(!ValidateEmail(username)){
+            //     setUsernameError(true);
+            //     return;
+            // }
             setUsernameError(false);
             if(password.length === 0){
                 setPasswordError(true);
@@ -36,6 +70,18 @@ export default function Signup(){
                 setPasswordError(false);
             }
         }
+        await axios.post("http://localhost:8081/subscribe",{username,password}).then((res)=>{
+            console.log(res);
+            if(res.status == "200"){
+                handleClickSnackbar();
+                return navigate("/login");
+            }
+           
+        }).catch((err)=>{
+            console.log(err)
+            
+            console.log(err)
+        })
         console.log(username,password,usernameError);
         // API request
     };
@@ -72,6 +118,11 @@ export default function Signup(){
                     </Link>
                 </div>
             </div>
+            <Snackbar anchorOrigin={{ vertical:"top", horizontal:"right" }} open={open} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                    User Logged in successfully;
+                </Alert>
+            </Snackbar>
         </div>
     )
 }
